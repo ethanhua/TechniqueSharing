@@ -1,0 +1,458 @@
+<!--
+    Powered By nodeppt - This is probably the best web presentation tool so far!
+    version: 1.4.5
+    site: https://github.com/ksky521/nodeppt
+    date: 
+-->
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rxjava入门学习 - By ethanhua</title>
+    <link rel="stylesheet" media="all" href="./css/nodeppt.css">
+    <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="./css/phone.css">
+    
+    <link rel="stylesheet" href="./js/highlight/styles/monokai_sublime.css">
+    <link rel="stylesheet" href="./css/font-awesome.css">
+    
+<link rel="stylesheet" href="./css/theme.moon.css">
+</head>
+<body>
+<div class="slides">
+    <slides id="container">
+        <slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>Rxjava入门学习</h1>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>Rxjava是什么</h2>
+<h2>为什么要使用Rxjava</h2>
+<h2>如何使用Rxjava</h2>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>what is rxjava（Reactive Extensions Java）?</h2>
+<ul class="fadeIn">
+<li><p><strong>定义：java中的响应式编程，是与异步数据流交互的编程范式</strong></p>
+</li>
+<li><p><strong>用途：对数据流可以方便的进行组合、分离、过滤、变换等等操作</strong></p>
+</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<p>一个基本的例子                             </p>
+<pre><code>Observable.create(new ObservableOnSubscribe&lt;Integer&gt;() {
+                @Override
+                public void subscribe(@NonNull ObservableEmitter&lt;Integer&gt; e) throws Exception {
+                    e.onNext(1);
+                    e.onNext(2);
+                    e.onNext(3);
+                    e.onNext(4);
+                    e.onComplete();
+                }
+            }).reduce(new BiFunction&lt;Integer, Integer, Integer&gt;() {
+                @Override
+                public Integer apply(@NonNull Integer integer, @NonNull Integer integer2) throws Exception {
+                    return integer + integer2;
+                }
+            }).subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(integer -&gt; {
+                        Log.e(&quot;result is:&quot;, integer + &quot;&quot;);
+            },throwable -&gt; {
+              throwable.printStackTrace();
+            });
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<p><img src="./img/Cfakepathrxreduce.png" alt=""> </p>
+<p>要点：被观察者(cold/hot)、观察者、操作符、线程切换、错误处理</p>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>why use rxjava in android development?</h2>
+<h3>相似库</h3>
+<p><a href="https://github.com/reactor/reactor-core" target="_blank">Reactor</a> 
+<a href="https://github.com/akka/akka" target="_blank">Akka-Streams</a>
+<a href="https://github.com/google/agera" target="_blank">agera</a></p>
+<h3>相比如传统命令式编程优势</h3>
+<ul class="fadeIn">
+<li>扁平化多层嵌套回调式代码</li>
+<li>例子<div class="columns-2">
+  <pre><code>api1.getDataxxx(new CallBack(){
+      onSuccess(Data data1){
+          //dosomething
+          ..
+          ..
+          .. 
+          api2.getDataxxx(data1.id,new CallBack(){
+                  onSuccess(Data data2){
+                      //dosomething
+                      ...
+                      ...
+                      ...
+                  }
+          })
+      }
+ })
+  </code></pre>
+  <pre><code> observableApi1.getDataxxx()
+            .flatMap(data1->{
+                //dosomething
+                ..
+                ..
+                ..
+                return observableApi2.getDataxxx(data1.id)
+            })
+            .subscribe(data2->{
+                //dosomething
+                ...
+                ...
+                ...
+            })
+  </code></pre>
+</div></li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>链式同步式逻辑过程，可读性强</h2>
+<ul class="fadeIn">
+<li>需求：下载一个猫列表的集合，选择最可爱的那个，然后把它保存到本地</li>
+<li>同步式：<pre><code>List&lt;Cat&gt; cats = api.queryCats(query);
+Cat cutest = findCutest(cats);
+Uri savedUri = api.store(cutest);
+</code></pre></li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<p>传统异步式：</p>
+<pre><code>api.queryCats(query, new Api.CatsQueryCallback() {
+            @Override
+            public void onCatListReceived(List&lt;Cat&gt; cats) {
+                Cat cutest = findCutest(cats);
+                api.store(cutest, new Api.StoreCallback() {
+                    @Override
+                    public void onCatStored(Uri uri) {
+                        cutestCatCallback.onCutestCatSaved(uri);
+                    }
+
+                    @Override
+                    public void onStoreFailed(Exception e) {
+                        cutestCatCallback.onError(e);
+                    }
+                });
+            }
+
+            @Override
+            public void onQueryFailed(Exception e) {
+                cutestCatCallback.onError(e);
+            }
+        });
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<p>Rx异步式：</p>
+<pre><code>Observable&lt;List&lt;Cat&gt;&gt; catsListAsyncJob = apiWrapper.queryCats(query);
+Observable&lt;Cat&gt; cutestCatAsyncJob = catsListAsyncJob.map(cats -&gt; findCutest(cats));
+Observable&lt;Uri&gt; storedUriAsyncJob = cutestCatAsyncJob.flatMap(cat -&gt; apiWrapper.store(cat));
+</code></pre><p>Rx链式：</p>
+<pre><code>apiWrapper.queryCats(query)
+          .map(cats -&gt; findCutest(cats))
+          .flatmap(cat -&gt; apiWrapper.store(cat))
+          .subscribe(uri -&gt; dosomething);
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>强大的错误处理机制</h2>
+<ul>
+<li>简洁方便 一处地方处理即可</li>
+<li>传统的try/catch没办法处理异步计算，Rx提供了合适的错误处理机制</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>强大的数据流处理能力，能驾驭复杂的异步或同步的数据流</h2>
+<ul>
+<li>一些现有异步方案的对比
+<img src="./img/compare.png" alt=""></li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>例子：</h2>
+<p>需求：一个页面初始化时有2个api请求，当这两个api请求都完成后拿到数据再去发起第三个请求，第三个请求完成后更新UI</p>
+<p>传统写法：</p>
+<pre><code>Data vData1;
+Data vData2;
+public getData3(){
+    api3.get(vData1,vData2,new Callback(){
+                onSuccess(Data data3){
+                     updateUI();
+                }
+            })
+}
+api1.get(params1,new Callback(){
+    onSuccess(Data data1){
+        vData1=data1;
+        if(vData2!=null){
+            getData3();
+        }
+    }
+})
+api2.get(params2,new Callback(){
+    onSuccess(Data data1){
+        vData2=data2;
+        if(vData1!=null){
+            getData3();
+        }
+    }
+})
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<p>使用Rxjava:</p>
+<pre><code>Observable.combineLatest(observableApi1.get(params1),observableApi2.get(param2),(data1,data2) -&gt; new Data[]{data1,data2})
+                .flatMap(datas-&gt; observableApi3.get(datas[0],datas[1]))
+                .subscribe(data3 -&gt; updateUI());
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>how to use rxjava？</h2>
+<ul>
+<li>Rxjava2新特性</li>
+<li>操作符的使用</li>
+<li>线程切换</li>
+<li>响应式编程思维</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>Rxjava2新特性</h2>
+<h3><strong>基于最新Reactive Stream规范完全重写</strong></h3>
+<p>标准化，可以与其他Reactive Stream实现的库混合使用</p>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>背压</h2>
+<ul>
+<li>描述的场景：上游生产速度大于下游消费速度</li>
+<li>RxJava1.x<br>对背压的支持划分不明确，有些操作符可以处理背压（流量控制的如：过滤、缓存），一般情况下超过缓存区上限会抛出背压错误：MissingBackpressureException（默认缓存大小为16）</li>
+<li>RxJava2.x<br>将被观察者划分为不处理背压和处理背压的两类:<br><strong>observable/flowable</strong></li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2> </h2>
+<ul class="fadeIn">
+<li><strong>observable</strong></li>
+<li>不会对背压进行额外的策略处理，会一直堆积数据流直到内存溢出</li>
+<li><strong>flowable</strong></li>
+<li>对背压这种情况有一些处理策略，创建时需要指定策略类型</li>
+<li><img src="./img/pullstreams.png" alt=""></li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>背压处理策略</h2>
+<ul>
+<li><p><strong>MISSING</strong><br>如果流的速度无法保持同步，可能会抛出MissingBackpressureException或IllegalStateException。</p>
+</li>
+<li><p><strong>BUFFER</strong><br>上游不断的发出onNext请求，直到下游处理完，也就是和Observable一样了，缓存池无限大，最后直到程序崩溃</p>
+</li>
+<li><p><strong>ERROR</strong><br>会在下游跟不上速度时抛出MissingBackpressureException。</p>
+</li>
+<li><p><strong>DROP</strong><br>会在下游跟不上速度时把onNext的值丢弃。</p>
+</li>
+<li><p><strong>LATEST</strong><br>会一直保留最新的onNext的值，直到被下游消费掉</p>
+</li>
+</ul>
+<p>Retrofit 默认处理策略：</p>
+<pre><code>observable.toFlowable(BackpressureStrategy.LATEST)
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>一些类或函数的改动</h2>
+<img src="./img/Publisher-Subscriber-class-relation.png" alt="">
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<ul class="fadeIn">
+<li>Subscription -&gt; disposable</li>
+<li>Action1 -&gt; Consumer</li>
+<li>发射的数据不能为null</li>
+<li>subscribe 不再返回Subcription而是返回void,可通过subscribeWith方法来返回disposable</li>
+<li>Subscriber 中抛出异常不再被捕获调用onError，可通过套一层SafeSubscriber来兼容</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>操作符的使用</h2>
+<ul>
+<li>创建</li>
+<li>变换</li>
+<li>过滤</li>
+<li>组合</li>
+<li>错误处理</li>
+<li>辅助</li>
+<li>布尔</li>
+<li>算术</li>
+<li>连接</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h3>常用</h3>
+<ul>
+<li>create/just/from/timer</li>
+<li>map/flatmap/buffer</li>
+<li>debouce/distinct/filter/take/skip</li>
+<li>combineLatest/merge</li>
+<li>retry</li>
+<li>delay/doXXX/timeInterval</li>
+<li>compose</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>线程切换</h2>
+<ul>
+<li>数据被订阅和产生的线程
+subscribeOn</li>
+<li>数据在观察者中执行逻辑的线程
+observeOn<pre><code>Observable.create(...)
+  .lift1(...)
+  .subscribeOn(scheduler1)
+  .lift2(...)
+  .observeOn(scheduler2)
+  .lift3(...)
+  .subscribeOn(scheduler3)
+  .lift4(...)
+  .observeOn(scheduler4)
+  .doOnSubscribe(...)
+  .subscribeOn(scheduler5)
+  .observeOn(scheduler6)
+  .subscribe(...);
+</code></pre></li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<img src="./img/rxjava_flow.png" alt="">
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>响应式编程思维</h2>
+<ul>
+<li>一切皆为数据流</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>Android开发中的一些Rx库</h2>
+<ul>
+<li>Retrofit</li>
+<li>RxBinding</li>
+<li>RxBus</li>
+<li>RxLifecycle</li>
+<li>RxSharePeference</li>
+<li>RxPermission</li>
+<li>RxActivityResult</li>
+<li>RxNetWork</li>
+<li>RxDialog</li>
+<li>Luban</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>进阶文章</h2>
+<ul>
+<li>响应式编程 -&gt; <a href="http://www.devtf.cn/?p=174" target="_blank">那些年我们错过的响应式编程</a></li>
+<li>链式调用范式实现原理 -&gt; <a href="http://www.devtf.cn/?p=323" target="_blank">NotRxJava懒人专用指南</a></li>
+<li>操作符文档 -&gt; <a href="https://mcxiaoke.gitbooks.io/rxdocs/content/Operators.html" target="_blank">ReactiveX文档中文翻译</a></li>
+<li>线程调度 -&gt;  <a href="http://zhangtielei.com/posts/blog-rxandroid-schedulers.html" target="_blank">线程控制判断图解</a> 
+            <a href="http://blog.csdn.net/xmxkf/article/details/51821940" target="_blank">线程调度源码分析及图解</a></li>
+<li>背压    -&gt;   <a href="https://zhuanlan.zhihu.com/p/24473022?refer=dreawer" target="_blank">关于RxJava最友好的文章——背压</a></li>
+<li>综合    -&gt;   <a href="http://gank.io/post/560e15be2dca930e00da1083" target="_blank">给Android开发者的RxJava详解</a><a href="https://zouzhberk.github.io/rxjava-study/" target="_blank">RxJava2响应式编程介绍</a></li>
+<li>ppt及视频   -&gt;   <a href="https://github.com/zhihu/zhihu-rxjava-meetup" target="_blank">知乎Rxjava meetup </a>
+</ul>
+
+</article></section></slide>
+        
+
+        <!-- <slide class="slide logoslide dark nobackground">
+            <article class="flexbox vcenter">
+                <h2 style="color: white;">Powered By nodeppt v1.4.5</h2>
+            </article>
+        </slide> -->
+        <div class="slideTip" id="tip"></div>
+    </slides>
+</div>
+<canvas id="drawBoard" class="draw-board" width="900" height="700"></canvas>
+<div class="progress"><span id="progress"></span></div>
+<div id="_buttons">
+    <div class="_btn-box" id="_btn-box" style="display:none;">
+        <button class="fa fa-arrow-circle-left" id="_btn-prev"></button>
+        <button class="fa fa-arrow-circle-right" id="_btn-next"></button>
+        <button class="fa fa-paint-brush" id="_btn-brush"></button>
+        <button class="fa fa-compress" id="_btn-overview" data-toggle="fa fa-expand"></button>
+    </div>
+    <button class="fa fa-bars" id="_btn-bar"  data-toggle="fa fa-close"></button>
+</div>
+<script src="./js/mixjs/lib/mix.0.3.0.min.js"></script>
+<script>
+    var ASSET_RELATIVE_DIR = ".";
+</script>
+<script>
+var base = location.protocol + '//' + location.host;
+
+var path = (location.pathname + '#').split('/').filter(function(v){
+    return !!v;
+});
+path.pop();
+path = path.join('/');
+if (typeof ASSET_RELATIVE_DIR === 'string') {
+    path = path + '/' + ASSET_RELATIVE_DIR;
+}
+MixJS.config({
+    baseURL: [ base, path, 'js'].join('/')+'/'
+});
+
+</script>
+<script src="./js/mixjs/lib/event/broadcast.js"></script>
+<script src="./js/nodeppt.js"></script>
+<script>
+Slide.init({
+    containerID: 'container',
+    drawBoardID: 'drawBoard',
+    slideClass: '.slide',
+    buildClass: '.build',
+    progressID: 'progress',
+    transition: 'slide2',
+    width: 1100,
+    dir: './',
+    
+    //打开下面的注释就开启postMessage方式
+    //访问网址127.0.0.1:8080/ppt/demo#client
+    control:{
+        type: 'postMessage',
+        args:{
+            isControl:  false
+        }
+    },
+    
+    tipID: 'tip'
+});
+MixJS.loadJS('highlight/highlight.pack.js',function(){
+    hljs.tabReplace = '  ';
+    hljs.initHighlightingOnLoad();
+});
+</script>
+<script src="./js/demo.js"></script>
+<link rel="stylesheet" href="./css/demo.css">
+
+<!--placeholder-->
+</body>
+</html>
