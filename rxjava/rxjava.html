@@ -169,7 +169,7 @@ Observable&lt;Uri&gt; storedUriAsyncJob = cutestCatAsyncJob.flatMap(cat -&gt; ap
 <h2>强大的错误处理机制</h2>
 <ul>
 <li>简洁方便 一处地方处理即可</li>
-<li>传统的try/catch没办法处理异步计算，Rx提供了合适的错误处理机制</li>
+<li>传统的try/catch没办法处理异步，Rx提供了合适的错误处理机制</li>
 </ul>
 
 </article></section></slide>
@@ -238,7 +238,7 @@ api2.get(params2,new Callback(){
 <slide class="slide"><section class="slide-wrapper"><article>
 <h2>背压</h2>
 <ul>
-<li>描述的场景：上游生产速度大于下游消费速度</li>
+<li>描述的场景：上下游运行在各自的线程中，上游生产速度大于下游消费速度</li>
 <li>RxJava1.x<br>对背压的支持划分不明确，有些操作符可以处理背压（流量控制的如：过滤、缓存），一般情况下超过缓存区上限会抛出背压错误：MissingBackpressureException（默认缓存大小为16）</li>
 <li>RxJava2.x<br>将被观察者划分为不处理背压和处理背压的两类:<br><strong>observable/flowable</strong></li>
 </ul>
@@ -258,7 +258,7 @@ api2.get(params2,new Callback(){
 <slide class="slide"><section class="slide-wrapper"><article>
 <h2>背压处理策略</h2>
 <ul>
-<li><p><strong>MISSING</strong><br>如果流的速度无法保持同步，可能会抛出MissingBackpressureException或IllegalStateException。</p>
+<li><p><strong>MISSING</strong><br>不会对发射的数据做缓存或丢弃处理，可能会抛出MissingBackpressureException或IllegalStateException。</p>
 </li>
 <li><p><strong>BUFFER</strong><br>上游不断的发出onNext请求，直到下游处理完，也就是和Observable一样了，缓存池无限大，最后直到程序崩溃</p>
 </li>
@@ -371,7 +371,7 @@ observeOn<pre><code>Observable.create(...)
 <ul>
 <li>响应式编程 -&gt; <a href="http://www.devtf.cn/?p=174" target="_blank">那些年我们错过的响应式编程</a></li>
 <li>链式调用范式实现原理 -&gt; <a href="http://www.devtf.cn/?p=323" target="_blank">NotRxJava懒人专用指南</a></li>
-<li>操作符文档 -&gt; <a href="https://mcxiaoke.gitbooks.io/rxdocs/content/Operators.html" target="_blank">ReactiveX文档中文翻译</a></li>
+<li>操作符文档 -&gt; <a href="http://reactivex.io/documentation/operators.html" target="_blank">英文全版</a><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/Operators.html" target="_blank">中文版（不全）</a></li>
 <li>线程调度 -&gt;  <a href="http://zhangtielei.com/posts/blog-rxandroid-schedulers.html" target="_blank">线程控制判断图解</a> 
             <a href="http://blog.csdn.net/xmxkf/article/details/51821940" target="_blank">线程调度源码分析及图解</a></li>
 <li>背压    -&gt;   <a href="https://zhuanlan.zhihu.com/p/24473022?refer=dreawer" target="_blank">关于RxJava最友好的文章——背压</a></li>
