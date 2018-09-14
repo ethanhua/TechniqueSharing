@@ -1,0 +1,498 @@
+<!--
+    Powered By nodeppt - This is probably the best web presentation tool so far!
+    version: 1.4.5
+    site: https://github.com/ksky521/nodeppt
+    date: 
+-->
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>kotlin - By ethanhua</title>
+    <link rel="stylesheet" media="all" href="./css/nodeppt.css">
+    <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="./css/phone.css">
+    
+    <link rel="stylesheet" href="./js/highlight/styles/monokai_sublime.css">
+    <link rel="stylesheet" href="./css/font-awesome.css">
+    
+<link rel="stylesheet" href="./css/theme.moon.css">
+</head>
+<body>
+<div class="slides">
+    <slides id="container">
+        <slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>内容</h1>
+<h2>what</h2>
+<h2>why</h2>
+<h2>how</h2>
+<h2>应用中注意点</h2>
+<h2>扩展</h2>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>kotlin是一种什么语言</h1>
+<blockquote>
+<p>JetBrains开发的基于JVM的静态类型编程语言</p>
+</blockquote>
+<ul class="rollIn">
+<li>JetBrains开发<br>决定了Kotlin实用与高效等特征</li>
+<li>基于Jvm<br>可以应用于Jvm生态环境 可利用现有Java生态</li>
+<li>静态类型</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>kotlin有什么优势</h1>
+<h2>语言层面</h2>
+<ul class="rollIn">
+<li>务实 吸取了许多现代语言好用的语法糖，消除了很多模板代码 把一些事情交给IDE去做</li>
+<li>安全 null类型检查、类型安全转换、函数式编程支持</li>
+<li>更灵活的抽象 函数式编程</li>
+<li>性能相当 更有内联函数支持</li>
+</ul>
+<h2>工程层面</h2>
+<ul class="rollIn">
+<li>IDE完美支持</li>
+<li>Google大力推广应用 未来趋势</li>
+<li>与Java100%兼容，可利用Java现在的生态<h2>缺点</h2>
+</li>
+<li>生成方法数增多</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article class="flexbox vleft">
+<h1>如何入手kotlin开发</h1>
+<h2>开发环境</h2>
+<p>AS3.0自动支持，创建Kotlin文件时会自动配置依赖，3.0以下需要安装插件</p>
+<h2>语法介绍</h2>
+<ul>
+<li>变量，函数</li>
+<li>接口，类</li>
+<li>控制语句</li>
+<li>类型系统</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>变量</h2>
+<p>关键字： 类型推导、可变和不可变</p>
+<pre><code>val a = 3;
+var b = &quot;hello world&quot;;
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>函数</h2>
+<ul>
+<li>定义</li>
+</ul>
+<pre><code>fun max(a:Int,b:Int):Int{                                
+    return if(a&gt;b) a else b
+}
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>函数参数</h1>
+<ul>
+<li>可以有默认值</li>
+<li>可以为函数，返回值也可以为函数</li>
+<li>函数也是一种变量</li>
+</ul>
+<pre><code>fun requestData(id: String,tag : String =&quot;test&quot;, callback: (data:String)-&gt;Unit){
+
+}
+fun onSuccess(){
+    println(&quot;request data success!&quot;)
+}
+fun main(){
+    requestData(&quot;someId&quot;,::onSuccess())
+}
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>作用域</h1>
+<blockquote>
+<p>变量和函数可以被定义在任何地方，不需要定义在类中</p>
+</blockquote>
+<ul>
+<li><p>顶层变量，函数<br>变量 = java静态变量
+函数 = java静态函数</p>
+</li>
+<li><p>局部函数<br>定义在函数内的函数，适用于在函数内部重复某些逻辑的情况下</p>
+</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>扩展属性、函数</h2>
+<ul>
+<li>给已有类添加新的函数  <pre><code>fun Image.load(url:String){                                      
+      Glide.with(this.context)
+           .load(url)
+           .into(this)
+}
+</code></pre></li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<ul>
+<li>常用标准库函数</li>
+</ul>
+<pre><code>public inline fun &lt;T, R&gt; T.run(block: T.() -&gt; R): R = block()
+
+public inline fun &lt;T, R&gt; with(receiver: T, block: T.() -&gt; R): R = receiver.block()
+
+public inline fun &lt;T&gt; T.apply(block: T.() -&gt; Unit): T { block(); return this }
+
+public inline fun &lt;T&gt; T.also(block: (T) -&gt; Unit): T { block(this); return this }
+
+public inline fun &lt;T, R&gt; T.let(block: (T) -&gt; R): R = block(this)
+
+public inline fun &lt;T&gt; T.takeIf(predicate: (T) -&gt; Boolean): T? = if (predicate(this)) this else null
+
+public inline fun &lt;T&gt; T.takeUnless(predicate: (T) -&gt; Boolean): T? = if (!predicate(this)) this else null
+
+public inline fun repeat(times: Int, action: (Int) -&gt; Unit) {
+    for (index in 0 until times) {
+        action(index)
+    }
+}
+</code></pre><p>主要从函数参数、函数返回值、语义上做区别</p>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>接口，类</h2>
+<ul>
+<li>接口和java差不多<pre><code>interface Clickable{
+  fun click()
+}
+</code></pre></li>
+<li>类<pre><code>class Button: Clickable{
+ override fun click() = println(&quot;I was clicked&quot;) 
+}
+</code></pre></li>
+<li>kotlin中类默认为public和final，如果需要被继承，需要用open来标识类</li>
+<li>嵌套类默认不包含外部类的引用，如需包含可使用 inner 关键字标明内部类</li>
+<li>密封类 子类被限制在同一个文件内</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h3>构造器</h3>
+<pre><code>class User(val nickname: String)
+</code></pre><pre><code>class User constructor(_nickname: String) { // 1 带有一个参数的主构造器
+
+    val nickname: String
+
+    init { // 2 初始化块
+        nickname = _nickname
+    }
+}
+</code></pre><p>次构造函数</p>
+<pre><code>open class View {
+
+    constructor(ctx: Context) { // 1 次构造函数
+        // some code
+    }
+
+    constructor(ctx: Context, attr: AttributeSet) { // 1 次构造函数
+        // some code
+    }
+}
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h3>类的高级用法</h3>
+<ul>
+<li><p>数据类
+自动生成 toString,equals和hashCode</p>
+</li>
+<li><p>单例类
+object 关键字 也可以用作匿名对象</p>
+</li>
+<li><p>类委托
+简洁完成java中的装饰者/包装模式</p>
+<pre><code>class CountingSet&lt;T&gt;(
+      val innerSet: MutableCollection&lt;T&gt; = HashSet&lt;T&gt;()
+) : MutableCollection&lt;T&gt; by innerSet { // 1 委托MutableCollection的实现给innerSet
+
+  var objectsAdded = 0
+
+  override fun add(element: T): Boolean { // 2 没有委托，提供了一个不同的实现
+      objectsAdded++
+      return innerSet.add(element)
+  }
+
+  override fun addAll(c: Collection&lt;T&gt;): Boolean {
+      objectsAdded += c.size
+      return innerSet.addAll(c)
+  }
+}
+</code></pre></li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<ul>
+<li>伴生对象
+替代Java中的静态成员<pre><code>class A {
+  companion object {
+      fun bar() {
+          println(&quot;Companion object called&quot;)
+      }
+  }
+}
+</code></pre></li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>控制语句</h1>
+<h2>条件</h2>
+<pre><code>val a=1;
+val b=2;
+val c = if (a &gt; b) a else b; //表达式可用于值
+</code></pre><h2>循环</h2>
+<pre><code>val list = arrayListOf(&quot;10&quot;, &quot;11&quot;, &quot;1001&quot;)
+for ((index, element) in list.withIndex()) { // 通过索引遍历集合
+    println(&quot;$index: $element&quot;)
+}
+</code></pre><h2>分支</h2>
+<p> when代替switch</p>
+<pre><code>fun getWarmth(color: Color) = when(color) {
+    Color.RED, Color.ORANGGE, Color.YELLOW -&gt; &quot;warm&quot;
+    Color.GREEN -&gt; &quot;neutral&quot;
+    Color.BLUE, Color.INDIGO, Color.VIOLET -&gt; &quot;cold&quot;
+}
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>类型系统</h1>
+<h2>可空与不可空</h2>
+<pre><code>var a? = Person();
+var b  = Person();
+a = null 
+val aInt: Int? = a as? Int // 安全的类型转换
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>延迟初始化</h2>
+<p>有些字段不为空，但在定义的时候不能赋值，这个时候可以使用延迟初始化了  </p>
+<pre><code>lateinit var a:String;
+</code></pre><p>利用属性委托来实现延迟初始化</p>
+<pre><code>val c by lazy{
+   &quot;i&#39;m c&quot;
+}
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>原始类型</h2>
+<p>8种基础类型 kotlin以对象存在，不能隐式转换
+在运行时，数字类型会尽可能的转换成高效的基本类型来表示，除了泛型。</p>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>集合</h2>
+<h3>集合的创建</h3>
+<pre><code>val list = listOf(1, 7, 53)
+val map = mapOf(1 to &quot;one&quot;, 7 to &quot;seven&quot;, 53 to &quot;fifty-three&quot;)
+val set = setOf(1, 7, 53)
+</code></pre><h3>可变集合、不可变集合</h3>
+<pre><code>val list = listOf&lt;String&gt;(&quot;1&quot;,&quot;2&quot;) 
+val mutableList = mutableListOf&lt;String&gt;(&quot;1&quot;,&quot;2&quot;) 
+val mutableListWithNull = mutableListOf&lt;String?&gt;(&quot;1&quot;,&quot;2&quot;) 
+mutableList.add(&quot;0&quot;); // 编译通过
+listStr.add(&quot;0&quot;); // 编译不通过
+mutableList[0]=&quot;1&quot;; // 编译通过
+listStr[0] = &quot;1&quot;; // 编译不通过
+</code></pre><h3>可空集合、不可空集合</h3>
+<pre><code>mutableList.add(null);// 编译不通过
+mutableListWithNull.add(null);// 编译通过
+val length1 = mutableList[0].length; // 编译通过
+val length2 = mutableListWithNull[0].length // 编译不通过 需用？.
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h3>中缀调用和析构声明</h3>
+<pre><code>val map = mapOf(1 to &quot;one&quot;, 7 to &quot;seven&quot;, 53 to &quot;fifty-three&quot;)
+</code></pre><p>中缀定义</p>
+<pre><code>只有一个参数 用infix关键字定义
+infix fun Any.to(other: Any) = Pair(this, other)
+</code></pre><p>析构声明</p>
+<pre><code>val (number, name) = 1 to &quot;one&quot;
+
+for ((index, element) in collection.withIndex()) {
+    println(&quot;$index: $element&quot;)
+}
+</code></pre><p>原理上是采用componentN() 函数析构的</p>
+<ul>
+<li>操作符重载</li>
+<li>泛型</li>
+<li>注解 。。。</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>应用中的注意点</h2>
+<ul>
+<li>可空类型<br>Kotlin的非空只是编译时检查，不可空如果在编译时仍为空会报TypeCastException
+所以定义为非空的对象，如果通过其他手段 如反射置空 则可能导致TypeCastException异常，在android开发中 定义一些外部输入的对象，如服务器请求返回对象及其类中的字段都需要定义为可空类型。</li>
+</ul>
+<p>由于java是没有可空或者非空这种类型的，所以在与java互操作时，需要自己判断定义是否可空还是不可空</p>
+<ul>
+<li><p>Kotlin没有基础类型，不能隐式转换</p>
+</li>
+<li><p>Kotlin中的 == 比较的是值 相当于java中的 equals === 才是比较引用</p>
+</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h2>扩展</h2>
+<h3><a href="https://github.com/Kotlin/anko" target="_blank">Anko</a></h3>
+<pre><code>verticalLayout {
+    val name = editText()
+    button(&quot;Say Hello&quot;) {
+        onClick { toast(&quot;Hello, ${name.text}!&quot;) }
+    }
+}
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h3><a href="https://github.com/android/android-ktx" target="_blank">android-ktx</a></h3>
+<p>android平台上使用kotlin扩展函数简化开发
+Kotlin</p>
+<pre><code>sharedPreferences.edit()
+    .putBoolean(&quot;key&quot;, value)
+    .apply()
+</code></pre><p>kotlin with Android KTX:</p>
+<pre><code>sharedPreferences.edit {
+    putBoolean(&quot;key&quot;, value)
+}
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<h3><a href="https://github.com/Kotlin/kotlinx.coroutines" target="_blank">协程</a></h3>
+<ul>
+<li>让线程不再阻塞，充分利用</li>
+</ul>
+<p>协程适用的场景是 IO操作或CPU/GPU密集型操作，在遇到这些场景时 实际上协程不会阻塞只会挂起从而去执行其他任务，充分使用线程（线程一直处于running状态）</p>
+<pre><code>runBlocking&lt;Unit&gt; {
+            repeat(100_000) { // launch a lot of coroutines
+                launch {
+                    delay(1000L)
+                    println(&quot;hhy&quot;)
+                }
+            }
+        }
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>同步式逻辑，直观简洁</h1>
+<p>利用resume代替回调完成异步操作
+在协程里执行流是线性的, 其中的步骤无论是同步的还是异步的, 后面的步骤都会等前面的步骤完成</p>
+<pre><code>fun main(...) {
+    GlobalScope.launch(Unconfined) {
+        val deferred1 = async { requestDataAsync1() }
+        val deferred2 = async { requestDataAsync2() }
+        println(&quot;data1=${deferred2.await()}, data2=${deferred2.await()}&quot;)
+    }
+    Thead.sleep(10000L) // 继续无视这个sleep
+}
+suspend fun requestDataAsync1(): String {
+    delay(1000L)
+    return &quot;data1&quot;    
+}
+suspend fun requestDataAsync2(): String {
+    delay(1000L)
+    return &quot;data2&quot;    
+}
+</code></pre>
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<ul>
+<li>不适合场景</li>
+</ul>
+<p>多线程比单协程的好处是可以充分利用多核运转，虽然线程切换是额外损耗，但始终两个线程运行两个任务比一个线程来回切运行两人任务快，除非两个任务都是IO或计算密集型任务，现在kotlin中协程也提供了线程池来满足这种需求</p>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<p>谢谢大家</p>
+
+</article></section></slide>
+        
+
+        <!-- <slide class="slide logoslide dark nobackground">
+            <article class="flexbox vcenter">
+                <h2 style="color: white;">Powered By nodeppt v1.4.5</h2>
+            </article>
+        </slide> -->
+        <div class="slideTip" id="tip"></div>
+    </slides>
+</div>
+<canvas id="drawBoard" class="draw-board" width="900" height="700"></canvas>
+<div class="progress"><span id="progress"></span></div>
+<div id="_buttons">
+    <div class="_btn-box" id="_btn-box" style="display:none;">
+        <button class="fa fa-arrow-circle-left" id="_btn-prev"></button>
+        <button class="fa fa-arrow-circle-right" id="_btn-next"></button>
+        <button class="fa fa-paint-brush" id="_btn-brush"></button>
+        <button class="fa fa-compress" id="_btn-overview" data-toggle="fa fa-expand"></button>
+    </div>
+    <button class="fa fa-bars" id="_btn-bar"  data-toggle="fa fa-close"></button>
+</div>
+<script src="./js/mixjs/lib/mix.0.3.0.min.js"></script>
+<script>
+    var ASSET_RELATIVE_DIR = ".";
+</script>
+<script>
+var base = location.protocol + '//' + location.host;
+
+var path = (location.pathname + '#').split('/').filter(function(v){
+    return !!v;
+});
+path.pop();
+path = path.join('/');
+if (typeof ASSET_RELATIVE_DIR === 'string') {
+    path = path + '/' + ASSET_RELATIVE_DIR;
+}
+MixJS.config({
+    baseURL: [ base, path, 'js'].join('/')+'/'
+});
+
+</script>
+<script src="./js/mixjs/lib/event/broadcast.js"></script>
+<script src="./js/nodeppt.js"></script>
+<script>
+Slide.init({
+    containerID: 'container',
+    drawBoardID: 'drawBoard',
+    slideClass: '.slide',
+    buildClass: '.build',
+    progressID: 'progress',
+    transition: 'slide3',
+    width: 1100,
+    dir: './',
+    
+    //打开下面的注释就开启postMessage方式
+    //访问网址127.0.0.1:8080/ppt/demo#client
+    control:{
+        type: 'postMessage',
+        args:{
+            isControl:  false
+        }
+    },
+    
+    tipID: 'tip'
+});
+MixJS.loadJS('highlight/highlight.pack.js',function(){
+    hljs.tabReplace = '  ';
+    hljs.initHighlightingOnLoad();
+});
+</script>
+<script src="./js/demo.js"></script>
+<link rel="stylesheet" href="./css/demo.css">
+
+<!--placeholder-->
+</body>
+</html>
