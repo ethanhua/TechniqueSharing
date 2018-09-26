@@ -20,13 +20,17 @@
 <body>
 <div class="slides">
     <slides id="container">
-        <slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
-<h1>内容</h1>
+        <slide class="slide"><section class="slide-wrapper"><article>
+<h2>Kotlin在Android App开发中的应用</h2>
+<p>华洪杨</p>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
 <h2>what</h2>
 <h2>why</h2>
 <h2>how</h2>
-<h2>应用中注意点</h2>
-<h2>扩展</h2>
+<h2>tips</h2>
+<h2>extension</h2>
 
 </article></section></slide>
 <slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
@@ -36,7 +40,7 @@
 </blockquote>
 <ul class="rollIn">
 <li>JetBrains开发<br>决定了Kotlin实用与高效等特征</li>
-<li>基于Jvm<br>可以应用于Jvm生态环境 可利用现有Java生态</li>
+<li>基于Jvm<br>可利用现有Java生态</li>
 <li>静态类型</li>
 </ul>
 
@@ -54,16 +58,17 @@
 <ul class="rollIn">
 <li>IDE完美支持</li>
 <li>Google大力推广应用 未来趋势</li>
-<li>与Java100%兼容，可利用Java现在的生态<h2>缺点</h2>
-</li>
-<li>生成方法数增多</li>
+<li>与Java100%兼容，可利用Java现在的生态</li>
 </ul>
 
 </article></section></slide>
 <slide class="slide"><section class="slide-wrapper"><article class="flexbox vleft">
-<h1>如何入手kotlin开发</h1>
+<h1>用Kotlin开发Android应用</h1>
 <h2>开发环境</h2>
-<p>AS3.0自动支持，创建Kotlin文件时会自动配置依赖，3.0以下需要安装插件</p>
+<p>AS3.0以上自动支持，创建Kotlin文件时会自动配置依赖，3.0以下需要安装插件</p>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
 <h2>语法介绍</h2>
 <ul>
 <li>变量，函数</li>
@@ -104,7 +109,7 @@ fun onSuccess(){
     println(&quot;request data success!&quot;)
 }
 fun main(){
-    requestData(&quot;someId&quot;,::onSuccess())
+    requestData(&quot;someId&quot;,callback = ::onSuccess())
 }
 </code></pre>
 </article></section></slide>
@@ -125,7 +130,7 @@ fun main(){
 <slide class="slide"><section class="slide-wrapper"><article>
 <h2>扩展属性、函数</h2>
 <ul>
-<li>给已有类添加新的函数  <pre><code>fun Image.load(url:String){                                      
+<li>给已有类添加新的函数  <pre><code>fun ImageView.load(url:String){                                      
       Glide.with(this.context)
            .load(url)
            .into(this)
@@ -159,6 +164,24 @@ public inline fun repeat(times: Int, action: (Int) -&gt; Unit) {
 }
 </code></pre><p>主要从函数参数、函数返回值、语义上做区别</p>
 
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<pre><code>// before
+
+longlonglongNameSomeView.text=&quot;hello kotlin&quot;
+longlonglongNameSomeView.setTextColor(resources.getColor(R.color.red))
+longlonglongNameSomeView.setBackgroundColor(resources.getColor(R.color.white))
+longlonglongNameSomeView.textSize = 16f
+
+// use apply
+
+longlonglongNameSomeView.apply {
+        text = &quot;hello kotlin&quot;
+        setTextColor(resources.getColor(R.color.red))
+        setBackgroundColor(resources.getColor(R.color.white))
+        textSize = 16f
+}
+</code></pre>
 </article></section></slide>
 <slide class="slide"><section class="slide-wrapper"><article>
 <h2>接口，类</h2>
@@ -202,14 +225,21 @@ public inline fun repeat(times: Int, action: (Int) -&gt; Unit) {
 </code></pre>
 </article></section></slide>
 <slide class="slide"><section class="slide-wrapper"><article>
-<h3>类的高级用法</h3>
+<h3>一些特殊类</h3>
 <ul>
-<li><p>数据类
-自动生成 toString,equals和hashCode</p>
-</li>
-<li><p>单例类
-object 关键字 也可以用作匿名对象</p>
-</li>
+<li>数据类<br>自动生成 toString,equals,copy和hashCode</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<ul>
+<li>单例类
+object 关键字 也可以用作匿名对象</li>
+</ul>
+
+</article></section></slide>
+<slide class="slide"><section class="slide-wrapper"><article>
+<ul>
 <li><p>类委托
 简洁完成java中的装饰者/包装模式</p>
 <pre><code>class CountingSet&lt;T&gt;(
@@ -298,9 +328,9 @@ val aInt: Int? = a as? Int // 安全的类型转换
 val map = mapOf(1 to &quot;one&quot;, 7 to &quot;seven&quot;, 53 to &quot;fifty-three&quot;)
 val set = setOf(1, 7, 53)
 </code></pre><h3>可变集合、不可变集合</h3>
-<pre><code>val list = listOf&lt;String&gt;(&quot;1&quot;,&quot;2&quot;) 
-val mutableList = mutableListOf&lt;String&gt;(&quot;1&quot;,&quot;2&quot;) 
-val mutableListWithNull = mutableListOf&lt;String?&gt;(&quot;1&quot;,&quot;2&quot;) 
+<pre><code>val listStr = listOf&lt;String&gt;(&quot;1&quot;,&quot;2&quot;) //不可变不可空
+val mutableList = mutableListOf&lt;String&gt;(&quot;1&quot;,&quot;2&quot;) //可变不可空
+val mutableListWithNull = mutableListOf&lt;String?&gt;(&quot;1&quot;,&quot;2&quot;) //可变可空
 mutableList.add(&quot;0&quot;); // 编译通过
 listStr.add(&quot;0&quot;); // 编译不通过
 mutableList[0]=&quot;1&quot;; // 编译通过
@@ -332,18 +362,12 @@ for ((index, element) in collection.withIndex()) {
 </ul>
 
 </article></section></slide>
-<slide class="slide"><section class="slide-wrapper"><article>
-<h2>应用中的注意点</h2>
+<slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>应用中的注意点</h1>
+<h3>空类型安全</h3>
 <ul>
-<li>可空类型<br>Kotlin的非空只是编译时检查，不可空如果在编译时仍为空会报TypeCastException
-所以定义为非空的对象，如果通过其他手段 如反射置空 则可能导致TypeCastException异常，在android开发中 定义一些外部输入的对象，如服务器请求返回对象及其类中的字段都需要定义为可空类型。</li>
-</ul>
-<p>由于java是没有可空或者非空这种类型的，所以在与java互操作时，需要自己判断定义是否可空还是不可空</p>
-<ul>
-<li><p>Kotlin没有基础类型，不能隐式转换</p>
-</li>
-<li><p>Kotlin中的 == 比较的是值 相当于java中的 equals === 才是比较引用</p>
-</li>
+<li>Kotlin的非空只是编译时检查，在运行时可能仍为空会报异常</li>
+<li>java与kotlin互操作时</li>
 </ul>
 
 </article></section></slide>
@@ -374,9 +398,9 @@ Kotlin</p>
 <slide class="slide"><section class="slide-wrapper"><article>
 <h3><a href="https://github.com/Kotlin/kotlinx.coroutines" target="_blank">协程</a></h3>
 <ul>
-<li>让线程不再阻塞，充分利用</li>
+<li>充分利用线程运行</li>
 </ul>
-<p>协程适用的场景是 IO操作或CPU/GPU密集型操作，在遇到这些场景时 实际上协程不会阻塞只会挂起从而去执行其他任务，充分使用线程（线程一直处于running状态）</p>
+<p>协程适用的场景是 IO操作密集型操作，在遇到这些场景时 实际上协程不会阻塞只会挂起从而去执行其他任务，充分使用线程（线程一直处于running状态）</p>
 <pre><code>runBlocking&lt;Unit&gt; {
             repeat(100_000) { // launch a lot of coroutines
                 launch {
@@ -409,15 +433,8 @@ suspend fun requestDataAsync2(): String {
 }
 </code></pre>
 </article></section></slide>
-<slide class="slide"><section class="slide-wrapper"><article>
-<ul>
-<li>不适合场景</li>
-</ul>
-<p>多线程比单协程的好处是可以充分利用多核运转，虽然线程切换是额外损耗，但始终两个线程运行两个任务比一个线程来回切运行两人任务快，除非两个任务都是IO或计算密集型任务，现在kotlin中协程也提供了线程池来满足这种需求</p>
-
-</article></section></slide>
-<slide class="slide"><section class="slide-wrapper"><article>
-<p>谢谢大家</p>
+<slide class="slide"><section class="slide-wrapper"><article class="flexbox vcenter">
+<h1>完</h1>
 
 </article></section></slide>
         
